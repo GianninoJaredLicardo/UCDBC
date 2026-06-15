@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Roster - UC Drum & Bugle Corps{% endblock %}
+
+{% block content %}
+
+<h2 class="text-2xl md:text-3xl font-black text-[#051C54] uppercase tracking-wide mb-2">Active Corps Roster</h2>
+<p class="text-slate-500 mb-2">Manage and view the active performing members of the ensemble.</p>
+<div class="w-16 h-1 bg-[#FFC107] rounded mb-8"></div>
+
+<!-- Add Member Form -->
+<div class="bg-white rounded-xl shadow-md border-t-4 border-[#0A369D] p-6 md:p-8 mb-10">
+    <h3 class="text-lg font-bold text-[#051C54] uppercase tracking-wide mb-5">Add New Member</h3>
+    <form action="{{ url_for('roster') }}" method="POST" class="flex flex-col gap-4">
+
+        <div class="flex flex-col gap-1">
+            <label for="name" class="text-sm font-semibold text-slate-700">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter member name" required
+                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition">
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="section" class="text-sm font-semibold text-slate-700">Section</label>
+            <select id="section" name="section" required
+                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition bg-white">
+                <option value="" disabled selected>Select Section</option>
+                <option value="Brass">Brass</option>
+                <option value="Percussion">Percussion</option>
+                <option value="Color Guard">Color Guard</option>
+            </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="instrument" class="text-sm font-semibold text-slate-700">Instrument / Role</label>
+            <input type="text" id="instrument" name="instrument" placeholder="e.g., Trumpet, Snare, Flags" required
+                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition">
+        </div>
+
+        <button type="submit"
+            class="mt-2 bg-[#0A369D] hover:bg-[#051C54] text-white font-bold py-3 px-6 rounded-lg transition duration-300 hover:shadow-lg active:scale-95 transform">
+            Register Member
+        </button>
+    </form>
+</div>
+
+<!-- Members Table -->
+<div class="bg-white rounded-xl shadow-md border-t-4 border-[#FFC107] p-6 md:p-8">
+    <h3 class="text-lg font-bold text-[#051C54] uppercase tracking-wide mb-5">Current Members List</h3>
+    <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-[#0A369D] text-white uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="px-4 py-3 rounded-tl-lg">ID</th>
+                    <th class="px-4 py-3">Name</th>
+                    <th class="px-4 py-3">Section</th>
+                    <th class="px-4 py-3 rounded-tr-lg">Instrument / Role</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% if members %}
+                    {% for member in members %}
+                    <tr class="hover:bg-slate-50 transition duration-150">
+                        <td class="px-4 py-3 text-slate-500 font-mono">{{ member.id }}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-800">{{ member.name }}</td>
+                        <td class="px-4 py-3">
+                            <span class="bg-[#0A369D]/10 text-[#051C54] text-xs font-bold px-2 py-1 rounded-full">{{ member.section }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-slate-600">{{ member.instrument }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="px-4 py-10 text-center text-slate-400 italic">No members registered yet. Use the form above to add members.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

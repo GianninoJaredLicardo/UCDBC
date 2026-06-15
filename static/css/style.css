@@ -1,0 +1,114 @@
+/* ==========================================================================
+   UC Drum & Bugle Corps - Global Custom Adjustments
+   ========================================================================== */
+
+/* Import a premium, clean modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    font-family: 'Inter', sans-serif;
+    /* Smooth rendering for modern web browsers */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom selection highlighting using UC colors */
+::selection {
+    background-color: #FFC107; /* UC Gold */
+    color: #051C54;            /* Dark Blue */
+}
+
+/* Subtle, smooth global transition for images inside cards */
+.group img {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure the layout wrapper never collapses awkwardly on ultra-wide screens */
+main {
+    min-height: calc(100vh - 160px);
+}
+
+/* Nav links — sliding gold underline with lift */
+.nav-link {
+    position: relative;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: #FFC107;
+    border-radius: 2px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover {
+    color: #FFC107;
+    transform: translateY(-2px);
+}
+
+.nav-link:hover::after {
+    width: 60%;
+}
+
+/* Gallery filter buttons */
+.filter-btn, .year-btn {
+    padding: 5px 14px;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.filter-btn:hover, .year-btn:hover {
+    border-color: #0A369D;
+    color: #0A369D;
+}
+
+.filter-btn.is-active, .year-btn.is-active {
+    background: #0A369D;
+    color: white;
+    border-color: #0A369D;
+}
+
+/* Mobile nav links — full-width tap targets */
+.nav-link-mobile {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+}
+
+.nav-link-mobile:hover {
+    background-color: #FFC107;
+    color: #051C54;
+    padding-left: 24px;
+}

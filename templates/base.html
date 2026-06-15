@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UC Drum & Bugle Corps Tribute{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/png" href="/static/images/ucdbc.png">
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen font-sans">
+
+    <header class="sticky top-0 z-50 bg-[#0A369D]/95 backdrop-blur-md border-b-4 border-[#FFC107] shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+
+            <!-- Top row: Logo + Title + Hamburger/Nav -->
+            <div class="flex flex-row justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="{{ url_for('static', filename='images/ucdbc.png') }}" alt="UC DBC Logo" class="h-11 w-11 rounded-full border-2 border-[#FFC107] object-cover flex-shrink-0">
+                    <h1 class="text-white font-black text-base tracking-wider uppercase leading-tight">
+                        University of Cebu<br><span class="text-[#FFC107]">Drum and Bugle Corps</span>
+                    </h1>
+                </div>
+
+                <!-- Hamburger button (mobile only) -->
+                <button id="menu-btn" class="sm:hidden text-white p-2 rounded-lg hover:bg-white/10 transition duration-200 focus:outline-none" aria-label="Toggle menu">
+                    <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                <!-- Desktop nav -->
+                <nav class="hidden sm:flex gap-1">
+                    <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('history') }}" class="nav-link">About Us</a>
+                    <a href="{{ url_for('gallery') }}" class="nav-link">Gallery</a>
+                </nav>
+            </div>
+
+            <!-- Mobile nav (hidden by default) -->
+            <nav id="mobile-menu" class="hidden flex-col gap-1 pt-3 mt-3 border-t border-white/20 sm:hidden">
+                <a href="{{ url_for('home') }}" class="nav-link-mobile">Home</a>
+                <a href="{{ url_for('history') }}" class="nav-link-mobile">About Us</a>
+                <a href="{{ url_for('gallery') }}" class="nav-link-mobile">Gallery</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 md:py-12">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-[#051C54] text-slate-400 text-center py-6 border-t-2 border-[#FFC107] text-sm mt-auto">
+        <p>&copy; 2026 University of Cebu Drum & Bugle Corps. All Rights Reserved.</p>
+    </footer>
+
+
+    <script>
+        const btn = document.getElementById('menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const iconOpen = document.getElementById('icon-open');
+        const iconClose = document.getElementById('icon-close');
+
+        btn.addEventListener('click', () => {
+            const isOpen = !menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', isOpen);
+            menu.classList.toggle('flex', !isOpen);
+            iconOpen.classList.toggle('hidden', !isOpen);
+            iconClose.classList.toggle('hidden', isOpen);
+        });
+    </script>
+
+</body>
+</html>

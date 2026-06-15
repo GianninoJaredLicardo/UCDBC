@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Login - UC Drum & Bugle Corps{% endblock %}
+
+{% block content %}
+<div class="min-h-[60vh] flex items-center justify-center">
+    <div class="w-full max-w-md">
+
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-lg border-t-4 border-[#FFC107] p-8">
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <img src="{{ url_for('static', filename='images/ucdbc.png') }}" alt="UC DBC Logo" class="h-16 w-16 rounded-full border-2 border-[#FFC107] object-cover mx-auto mb-4">
+                <h2 class="text-2xl font-black text-[#051C54] uppercase tracking-wide">Admin Login</h2>
+                <p class="text-slate-500 text-sm mt-1">Gallery management access only</p>
+            </div>
+
+            <!-- Error message -->
+            {% if error %}
+            <div class="bg-red-50 border border-red-200 text-red-700 text-sm font-semibold px-4 py-3 rounded-lg mb-5">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="POST" action="{{ url_for('login') }}" class="flex flex-col gap-4">
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-semibold text-slate-700">Username</label>
+                    <input type="text" name="username" placeholder="Enter username" required autofocus
+                        class="border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-semibold text-slate-700">Password</label>
+                    <input type="password" name="password" placeholder="Enter password" required
+                        class="border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition">
+                </div>
+
+                <button type="submit"
+                    class="mt-2 bg-[#0A369D] hover:bg-[#051C54] text-white font-bold py-3 rounded-lg transition duration-300 hover:shadow-lg active:scale-95 transform">
+                    Log In
+                </button>
+            </form>
+
+            <p class="text-center text-slate-400 text-xs mt-6">
+                <a href="{{ url_for('gallery') }}" class="hover:text-[#0A369D] transition">← Back to Gallery</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

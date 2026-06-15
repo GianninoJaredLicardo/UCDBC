@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ── Hero Section ─────────────────────────────────────────────── -->
+<section class="relative rounded-2xl overflow-hidden min-h-[75vh] flex items-center justify-center mb-10 bg-cover bg-center" style="background-image: linear-gradient(rgba(5, 28, 84, 0.78), rgba(10, 54, 157, 0.72)), url('/static/images/ucgroup.png');">
+    <div class="text-center max-w-3xl mx-auto px-6 py-16">
+        <span class="text-[#FFC107] text-xs font-bold tracking-widest uppercase border border-[#FFC107] px-3 py-1 rounded-full inline-block">Official Digital Monument</span>
+        <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mt-5 mb-5">Honoring the Pride of the University of Cebu</h2>
+        <p class="text-base md:text-xl font-light text-slate-200 mb-8">Celebrating decades of rhythm, structural discipline, musical mastery, and the champion spirit of the Webmasters marching ensemble.</p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="{{ url_for('gallery') }}" class="bg-[#FFC107] hover:bg-yellow-400 text-[#051C54] font-black px-7 py-3 rounded-xl transition duration-300 hover:shadow-lg hover:-translate-y-0.5 transform uppercase tracking-wide text-sm">
+                View Gallery &rarr;
+            </a>
+            <a href="{{ url_for('history') }}" class="bg-white/15 hover:bg-white/25 text-white border border-white/40 font-bold px-7 py-3 rounded-xl transition duration-300 hover:shadow-lg hover:-translate-y-0.5 transform uppercase tracking-wide text-sm backdrop-blur-sm">
+                About Us &rarr;
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ── Stats Bar ────────────────────────────────────────────────── -->
+<section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+    <div class="bg-[#051C54] text-white rounded-xl p-5 text-center hover:bg-[#0A369D] transition duration-300">
+        <p class="text-3xl font-black text-[#FFC107]">1997</p>
+        <p class="text-xs font-semibold uppercase tracking-wider mt-1 text-slate-300">Year Founded</p>
+    </div>
+    <div class="bg-[#051C54] text-white rounded-xl p-5 text-center hover:bg-[#0A369D] transition duration-300">
+        <p class="text-3xl font-black text-[#FFC107]">25+</p>
+        <p class="text-xs font-semibold uppercase tracking-wider mt-1 text-slate-300">Years of Service</p>
+    </div>
+<div class="bg-[#051C54] text-white rounded-xl p-5 text-center hover:bg-[#0A369D] transition duration-300">
+        <p class="text-3xl font-black text-[#FFC107]">∞</p>
+        <p class="text-xs font-semibold uppercase tracking-wider mt-1 text-slate-300">Champion Spirit</p>
+    </div>
+</section>
+
+<!-- ── Feature Cards ────────────────────────────────────────────── -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+    <div class="bg-white p-8 rounded-xl shadow-md border-t-4 border-[#FFC107] hover:shadow-xl hover:-translate-y-1 transform transition duration-300">
+        <h3 class="text-[#051C54] font-extrabold text-xl mb-3 uppercase tracking-wide">Sound Power</h3>
+        <p class="text-slate-600">Driven by a powerhouse brass line that commands attention, executing complex acoustic harmonies with unmatched volume and crystal precision.</p>
+    </div>
+    <div class="bg-white p-8 rounded-xl shadow-md border-t-4 border-[#FFC107] hover:shadow-xl hover:-translate-y-1 transform transition duration-300">
+        <h3 class="text-[#051C54] font-extrabold text-xl mb-3 uppercase tracking-wide">Visual Precision</h3>
+        <p class="text-slate-600">Brought to life by the synchronized patterns, vivid flag work, and expressive choreography of a disciplined championship color guard.</p>
+    </div>
+    <div class="bg-white p-8 rounded-xl shadow-md border-t-4 border-[#FFC107] hover:shadow-xl hover:-translate-y-1 transform transition duration-300">
+        <h3 class="text-[#051C54] font-extrabold text-xl mb-3 uppercase tracking-wide">Rhythmic Core</h3>
+        <p class="text-slate-600">Anchored by a rock-solid battery drumline executing intense, high-velocity rudiments that form the absolute heartbeat of the corps.</p>
+    </div>
+</section>
+
+
+<!-- ── Latest Gallery Preview ───────────────────────────────────── -->
+{% if latest_photos %}
+<section class="mb-10">
+    <div class="flex items-center justify-between mb-5">
+        <h3 class="text-xl font-black text-[#051C54] uppercase tracking-wide">Latest Photos</h3>
+        <a href="{{ url_for('gallery') }}" class="text-[#0A369D] hover:text-[#051C54] text-sm font-bold transition duration-200 hover:underline">
+            See All &rarr;
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {% for photo in latest_photos %}
+        <a href="{{ url_for('gallery') }}" class="group block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300">
+            <div class="h-48 overflow-hidden">
+                <img src="{{ url_for('static', filename='images/' + photo.filename) }}"
+                     alt="{{ photo.title }}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            </div>
+            <div class="p-4">
+                <span class="text-xs font-bold text-[#0A369D] uppercase tracking-wider">{{ photo.year }}</span>
+                <h4 class="text-sm font-bold text-slate-800 mt-0.5">{{ photo.title }}</h4>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Header + Upload Button -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
+    <div>
+        <h2 class="text-3xl font-black text-[#051C54] uppercase tracking-wide mb-2">Visual Showcase Gallery</h2>
+        <p class="text-slate-500">Capturing the energy, intensity, and colors of the corps in motion.</p>
+    </div>
+    <div class="flex items-center gap-3 self-start sm:self-auto">
+        {% if is_admin %}
+        <button id="upload-toggle" class="flex items-center gap-2 bg-[#0A369D] hover:bg-[#051C54] text-white font-bold px-5 py-2.5 rounded-xl transition duration-300 hover:shadow-lg flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Photo
+        </button>
+        <a href="{{ url_for('logout') }}" class="text-slate-400 hover:text-red-500 text-xs font-semibold transition duration-200 flex-shrink-0">
+            Logout
+        </a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-slate-500 text-xs transition duration-200 flex-shrink-0">
+            Admin
+        </a>
+        {% endif %}
+    </div>
+</div>
+<div class="w-16 h-1 bg-[#FFC107] rounded mb-6"></div>
+
+<!-- Upload Form (admin only, hidden by default) -->
+{% if is_admin %}
+<div id="upload-form" class="hidden bg-white rounded-xl shadow-md border-t-4 border-[#FFC107] p-6 mb-8">
+    <h3 class="text-lg font-bold text-[#051C54] uppercase tracking-wide mb-5">Upload New Photo</h3>
+    <form action="{{ url_for('gallery') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div class="flex flex-col gap-1 sm:col-span-2">
+            <label class="text-sm font-semibold text-slate-700">Photo File <span class="text-slate-400 font-normal">(max 8MB)</span></label>
+            <input type="file" name="photo" accept="image/*" required
+                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-slate-700 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#0A369D] file:text-white file:font-semibold file:text-sm hover:file:bg-[#051C54] transition">
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-semibold text-slate-700">Title</label>
+            <input type="text" name="title" placeholder="e.g. Sinulog Grand Parade" required
+                class="border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition">
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-semibold text-slate-700">Year</label>
+            <input type="text" name="year" placeholder="e.g. 2026" required
+                class="border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] transition">
+        </div>
+
+        <div class="flex flex-col gap-1 sm:col-span-2">
+            <label class="text-sm font-semibold text-slate-700">Category</label>
+            <select name="category" required
+                class="border border-slate-300 rounded-lg px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A369D] bg-white transition">
+                <option value="" disabled selected>Select Category</option>
+                <option value="Parades">Parade</option>
+                <option value="Intramurals">Intramural</option>
+                <option value="Events">Event</option>
+                <option value="Competitions">Competition</option>
+                
+            </select>
+        </div>
+
+        <div class="sm:col-span-2 flex gap-3">
+            <button type="submit" class="bg-[#0A369D] hover:bg-[#051C54] text-white font-bold py-2.5 px-6 rounded-lg transition duration-300">
+                Upload Photo
+            </button>
+            <button type="button" id="upload-cancel" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-lg transition duration-300">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<!-- Filter Bar -->
+{% if photos %}
+<div class="flex flex-wrap items-center gap-2 mb-8">
+    <button class="filter-btn is-active" data-value="all">All</button>
+    {% for cat in categories %}
+    <button class="filter-btn" data-value="{{ cat }}">{{ cat }}</button>
+    {% endfor %}
+
+    <span class="w-px h-5 bg-slate-300 mx-1 hidden sm:block"></span>
+
+    <button class="year-btn is-active" data-year="all">All Years</button>
+    {% for yr in years %}
+    <button class="year-btn" data-year="{{ yr }}">{{ yr }}</button>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Photo Grid -->
+<div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for photo in photos %}
+    <div class="gallery-card group relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 cursor-pointer"
+         data-category="{{ photo.category }}"
+         data-year="{{ photo.year }}"
+         data-src="{{ url_for('static', filename='images/' + photo.filename) }}"
+         data-title="{{ photo.title }}"
+         data-meta="{{ photo.year }} · {{ photo.category }}"
+         onclick="openLightbox(this)">
+
+        <!-- Image -->
+        <div class="h-56 overflow-hidden">
+            <img src="{{ url_for('static', filename='images/' + photo.filename) }}"
+                 alt="{{ photo.title }}"
+                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+        </div>
+
+        <!-- Hover caption overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#051C54]/90 via-[#051C54]/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-4 pointer-events-none">
+            <span class="text-[#FFC107] text-xs font-bold uppercase tracking-widest mb-1">{{ photo.year }} · {{ photo.category }}</span>
+            <h4 class="text-white font-bold text-lg leading-tight">{{ photo.title }}</h4>
+        </div>
+
+        <!-- Static caption (fades out on hover) -->
+        <div class="p-4 transition duration-300 group-hover:opacity-0">
+            <span class="text-xs font-bold text-[#0A369D] uppercase tracking-wider">{{ photo.year }}</span>
+            <h4 class="text-base font-bold text-slate-800 mt-0.5">{{ photo.title }}</h4>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-3 text-center py-16 text-slate-400">
+        <p class="text-lg font-semibold">No photos yet. Click <strong class="text-[#0A369D]">Add Photo</strong> above to upload one.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- No results message -->
+<p id="no-results" class="hidden text-center py-12 text-slate-400 italic text-lg">No photos match the selected filters.</p>
+
+
+<!-- ── Lightbox ─────────────────────────────────────────────────────── -->
+<div id="lightbox" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+
+    <!-- Close -->
+    <button onclick="closeLightbox()" class="absolute top-4 right-5 text-white hover:text-[#FFC107] transition duration-200 text-4xl font-light leading-none">&times;</button>
+
+    <!-- Prev -->
+    <button onclick="prevPhoto()" class="absolute left-2 md:left-6 text-white hover:text-[#FFC107] transition duration-200 p-2 rounded-full hover:bg-white/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+    </button>
+
+    <!-- Image + Caption -->
+    <div class="max-w-4xl w-full flex flex-col items-center gap-4">
+        <img id="lightbox-img" src="" alt="" class="max-h-[75vh] max-w-full rounded-xl shadow-2xl object-contain">
+        <div class="text-center">
+            <p id="lightbox-title" class="text-white font-bold text-xl"></p>
+            <p id="lightbox-meta" class="text-[#FFC107] text-sm font-semibold uppercase tracking-wider mt-1"></p>
+        </div>
+        <p id="lightbox-counter" class="text-slate-500 text-xs"></p>
+    </div>
+
+    <!-- Next -->
+    <button onclick="nextPhoto()" class="absolute right-2 md:right-6 text-white hover:text-[#FFC107] transition duration-200 p-2 rounded-full hover:bg-white/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+</div>
+
+
+<script>
+// ── Upload form toggle (admin only) ────────────────────────────────
+const uploadToggle = document.getElementById('upload-toggle');
+const uploadCancel = document.getElementById('upload-cancel');
+if (uploadToggle) {
+    uploadToggle.addEventListener('click', () => {
+        const form = document.getElementById('upload-form');
+        form.classList.toggle('hidden');
+        if (!form.classList.contains('hidden')) {
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+}
+if (uploadCancel) {
+    uploadCancel.addEventListener('click', () => {
+        document.getElementById('upload-form').classList.add('hidden');
+    });
+}
+
+// ── Filters ────────────────────────────────────────────────────────
+let activeCategory = 'all';
+let activeYear = 'all';
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        activeCategory = btn.dataset.value;
+        applyFilters();
+    });
+});
+
+document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        activeYear = btn.dataset.year;
+        applyFilters();
+    });
+});
+
+function applyFilters() {
+    const cards = document.querySelectorAll('.gallery-card');
+    let visible = 0;
+    cards.forEach(card => {
+        const show = (activeCategory === 'all' || card.dataset.category === activeCategory) &&
+                     (activeYear === 'all'      || card.dataset.year === activeYear);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+}
+
+// ── Lightbox ───────────────────────────────────────────────────────
+let lightboxPhotos = [];
+let currentIndex = 0;
+
+function getVisibleCards() {
+    return [...document.querySelectorAll('.gallery-card')].filter(c => c.style.display !== 'none');
+}
+
+function openLightbox(card) {
+    lightboxPhotos = getVisibleCards();
+    currentIndex = lightboxPhotos.indexOf(card);
+    renderLightbox();
+    const lb = document.getElementById('lightbox');
+    lb.classList.remove('hidden');
+    lb.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    const lb = document.getElementById('lightbox');
+    lb.classList.add('hidden');
+    lb.classList.remove('flex');
+    document.body.style.overflow = '';
+}
+
+function renderLightbox() {
+    const card = lightboxPhotos[currentIndex];
+    document.getElementById('lightbox-img').src = card.dataset.src;
+    document.getElementById('lightbox-img').alt = card.dataset.title;
+    document.getElementById('lightbox-title').textContent = card.dataset.title;
+    document.getElementById('lightbox-meta').textContent = card.dataset.meta;
+    document.getElementById('lightbox-counter').textContent =
+        (currentIndex + 1) + ' of ' + lightboxPhotos.length;
+}
+
+function nextPhoto() {
+    currentIndex = (currentIndex + 1) % lightboxPhotos.length;
+    renderLightbox();
+}
+
+function prevPhoto() {
+    currentIndex = (currentIndex - 1 + lightboxPhotos.length) % lightboxPhotos.length;
+    renderLightbox();
+}
+
+// Close on backdrop click
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+    if (document.getElementById('lightbox').classList.contains('hidden')) return;
+    if (e.key === 'Escape')      closeLightbox();
+    if (e.key === 'ArrowRight')  nextPhoto();
+    if (e.key === 'ArrowLeft')   prevPhoto();
+});
+</script>
+
+{% endblock %}
