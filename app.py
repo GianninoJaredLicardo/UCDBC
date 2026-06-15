@@ -2,7 +2,6 @@ import os
 import uuid
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -58,7 +57,7 @@ with app.app_context():
             Performance(title="UC Intramurals Opening Ceremony", date="September 18, 2026", location="UC Main Campus Gym"),
             Performance(title="Sinulog Grand Parade Performance", date="January 17, 2027", location="Cebu City")
         ]
-        db.session.bulk_save_objects(sample_events)
+        db.session.add_all(sample_events)
         db.session.commit()
 
     if not GalleryPhoto.query.first():
@@ -67,7 +66,7 @@ with app.app_context():
             GalleryPhoto(title="Philippine Independence Day", year="2026", category="Parades", filename="uc2026.png"),
             GalleryPhoto(title="Intramurals", year="2026", category="Intramurals", filename="ucgroup.png"),
         ]
-        db.session.bulk_save_objects(seed_photos)
+        db.session.add_all(seed_photos)
         db.session.commit()
 
 
@@ -81,6 +80,11 @@ def home():
 @app.route('/history')
 def history():
     return render_template('history.html')
+
+
+@app.route('/services')
+def services():
+    return render_template('services.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
